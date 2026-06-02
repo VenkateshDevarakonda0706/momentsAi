@@ -121,7 +121,7 @@ export default function LivePreview() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-violet-200 bg-violet-50 text-xs font-bold tracking-wider uppercase text-violet-600">
-            <Sparkles className="w-3.5 h-3.5" /> Interactive Sandbox
+            <Sparkles className="w-3.5 h-3.5" /> Interactive Studio Preview
           </div>
           <h2 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900">
             See the Magic In Action

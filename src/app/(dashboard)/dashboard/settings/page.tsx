@@ -111,7 +111,7 @@ export default function SettingsPage() {
                   className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-secondary/30 border border-border text-muted-foreground/70 text-sm cursor-not-allowed"
                 />
               </div>
-              <span className="text-[10px] text-muted-foreground pl-1">Email address cannot be changed in local sandbox mode.</span>
+              <span className="text-[10px] text-muted-foreground pl-1">Email address cannot be changed. Please contact support to update login credentials.</span>
             </div>
 
             <div className="space-y-1.5">

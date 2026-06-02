@@ -40,7 +40,7 @@ export function verifyPaymentSignature(
   signature: string
 ): boolean {
   const secret = process.env.RAZORPAY_KEY_SECRET;
-  if (!secret) return true; // Bypass verification in sandbox mode
+  if (!secret) return true; // Bypass verification in local simulation mode
 
   const generatedSignature = crypto
     .createHmac('sha256', secret)

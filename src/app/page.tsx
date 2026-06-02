@@ -53,7 +53,7 @@ const faqs = [
   { q: "How long does it take to compile a moment website?", a: "Under 10 seconds! Fill in the wizard details, select a theme, and click compile. Our engine designs, styles, and deploys the page instantly." },
   { q: "Is the generated website mobile-optimized?", a: "Absolutely. Every visual template is built mobile-first, ensuring an incredibly beautiful and fluid scrolling experience on any smartphone." },
   { q: "Can friends sign the guestbook or send custom wishes?", a: "Yes! Visitors can leave beautiful messages in the interactive guestbook card and trigger interactive confetti/heart bursts." },
-  { q: "Is this free during early access?", a: "Yes! We are running an early adopter sandbox phase. All premium features, unlimited designs, and AI drafts are 100% free." }
+  { q: "Is this free during early access?", a: "Yes! We are running an early access campaign where all premium visual themes, unlimited moments, and AI templates are 100% free." }
 ];
 
 export default function Home() {
@@ -217,14 +217,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing Section - Marked as sandbox free access */}
+      {/* Pricing Section - Marked as early access campaign */}
       <section id="pricing" className="py-24 bg-[#faf9f6]/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
             <span className="text-xs font-bold uppercase tracking-widest text-primary bg-primary/5 px-3.5 py-1 rounded-full">Early Launch</span>
-            <h2 className="text-3xl md:text-4.5xl font-black tracking-tight text-zinc-950">Free Sandbox Early Access</h2>
+            <h2 className="text-3xl md:text-4.5xl font-black tracking-tight text-zinc-950">Lifetime Pro Special Campaign</h2>
             <p className="text-zinc-600 text-lg font-medium">
-              Take advantage of our launch! Full early adopter privileges, absolutely free.
+              Join during our initial launch window! Secure lifetime premium Pro status, completely free.
             </p>
           </div>
 
@@ -235,8 +235,8 @@ export default function Home() {
                 <span className="px-3.5 py-1.5 rounded-full bg-violet-50 border border-violet-100 text-xs font-bold text-violet-600 uppercase tracking-widest">
                   Early Adopter Special
                 </span>
-                <h3 className="text-2xl font-black text-zinc-900 pt-2">Full Pro Sandbox</h3>
-                <p className="text-zinc-500 text-xs font-semibold">Everything unlocked at zero cost</p>
+                <h3 className="text-2xl font-black text-zinc-900 pt-2">Lifetime Pro Membership</h3>
+                <p className="text-zinc-500 text-xs font-semibold">Everything unlocked at ₹0 (Early Adopter Price)</p>
               </div>
 
               <div className="space-y-1">

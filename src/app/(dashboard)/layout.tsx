@@ -55,7 +55,7 @@ export default function DashboardLayout({
     { name: 'My Tributes', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Create Moment', href: '/generator', icon: PlusCircle },
     { name: 'Analytics Board', href: '/dashboard/analytics', icon: BarChart3 },
-    { name: 'Sandbox Subscriptions', href: '/dashboard/billing', icon: CreditCard },
+    { name: 'Pro Subscriptions', href: '/dashboard/billing', icon: CreditCard },
     { name: 'Studio Settings', href: '/dashboard/settings', icon: Settings },
   ];
 
@@ -116,7 +116,7 @@ export default function DashboardLayout({
               <span className="text-[10px] font-black uppercase tracking-wider">Early-Access Mode</span>
             </div>
             <p className="text-[9px] leading-normal text-zinc-500 font-semibold">
-              All lifetime generation slots and premium visual effects are unlocked free!
+              Your lifetime Pro membership is fully active and synchronized!
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export default function DashboardLayout({
                 <p className="text-xs font-black text-zinc-800 truncate leading-snug">{profile.full_name || 'Creator'}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[8px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-black uppercase tracking-widest leading-none">
-                    Pro Sandbox
+                    Pro Member
                   </span>
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default function DashboardLayout({
                     </div>
                     <div>
                       <p className="text-sm font-bold text-zinc-900 truncate">{profile.full_name || 'Creator'}</p>
-                      <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-black uppercase">Pro Sandbox</span>
+                      <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-black uppercase">Pro Member</span>
                     </div>
                   </div>
                 )}
