@@ -18,7 +18,8 @@ import {
   Copy, 
   Check, 
   Mail,
-  MessageSquare
+  MessageSquare,
+  LoaderCircle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { createClient } from '@/lib/supabase/client';
@@ -189,8 +190,10 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
 
   // Guestbook & Reactions lists
   const [guestbook, setGuestbook] = useState(initialGuestbook);
+  const [isSubmittingGuestbook, setIsSubmittingGuestbook] = useState(false);
   const [guestName, setGuestName] = useState('');
   const [guestMsg, setGuestMsg] = useState('');
+  const guestbookSubmitInFlight = useRef(false);
   const [reactionCounts, setReactionCounts] = useState({ heart: 14, like: 21, confetti: 9 });
 
   // Share Dialog state
@@ -295,7 +298,10 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
   // Add guestbook message
   const handleAddGuestbookMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!guestName.trim() || !guestMsg.trim()) return;
+    if (guestbookSubmitInFlight.current || !guestName.trim() || !guestMsg.trim()) return;
+
+    guestbookSubmitInFlight.current = true;
+    setIsSubmittingGuestbook(true);
 
     const newEntry = {
       name: guestName.trim(),
@@ -319,6 +325,9 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
         });
     } catch (err) {
       console.error("Failed to post message to Supabase:", err);
+    } finally {
+      guestbookSubmitInFlight.current = false;
+      setIsSubmittingGuestbook(false);
     }
   };
 
@@ -894,9 +903,15 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
                   />
                   <button
                     type="submit"
-                    className="px-4 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center shrink-0 hover:scale-102 transition-transform"
+                    disabled={isSubmittingGuestbook}
+                    aria-busy={isSubmittingGuestbook}
+                    className="px-4 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center shrink-0 transition-transform disabled:cursor-not-allowed disabled:opacity-70 hover:enabled:scale-102"
                   >
-                    <Send className="w-4 h-4" />
+                    {isSubmittingGuestbook ? (
+                      <LoaderCircle className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
