@@ -413,18 +413,28 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
     }
   };
 
-  const handleCopyShareLink = () => {
-    const url = `${window.location.origin}/m/${initialMoment.slug}`;
-    navigator.clipboard.writeText(url);
-    
-    if (copyTimeoutRef.current) {
-      clearTimeout(copyTimeoutRef.current);
+  const handleCopyShareLink = async () => {
+    if (typeof window === 'undefined' || !window.isSecureContext || !navigator.clipboard) {
+      console.warn("Clipboard access not available in this context.");
+      return;
     }
+
+    const url = `${window.location.origin}/m/${initialMoment.slug}`;
     
-    setCopiedLink(true);
-    copyTimeoutRef.current = setTimeout(() => {
-      setCopiedLink(false);
-    }, 1500);
+    try {
+      await navigator.clipboard.writeText(url);
+      
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      
+      setCopiedLink(true);
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopiedLink(false);
+      }, 1500);
+    } catch (err) {
+      console.error("Failed to copy link to clipboard:", err);
+    }
   };
 
   // Heart emoji reaction click trigger
@@ -1070,7 +1080,7 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
                           animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
                           exit={{ opacity: 0, y: 8, x: "-50%", scale: 0.95 }}
                           transition={{ duration: 0.15, ease: "easeOut" }}
-                          className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 px-2.5 py-1 rounded-md bg-zinc-950 text-white text-[11px] font-bold shadow-md whitespace-nowrap pointer-events-none z-50 flex items-center justify-center"
+                          className="absolute bottom-full left-1/2 mb-2 px-2.5 py-1 rounded-md bg-zinc-950 text-white text-[11px] font-bold shadow-md whitespace-nowrap pointer-events-none z-50 flex items-center justify-center"
                           role="status"
                           aria-live="polite"
                         >
@@ -1080,6 +1090,7 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
                       )}
                     </AnimatePresence>
                     <button
+                      type="button"
                       onClick={handleCopyShareLink}
                       className="px-5 py-3.5 rounded-2xl bg-primary text-primary-foreground font-bold text-xs shrink-0 flex items-center gap-1.5 transition-colors"
                     >
