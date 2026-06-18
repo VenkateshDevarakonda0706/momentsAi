@@ -948,6 +948,7 @@ useEffect(() => {
             <div className="columns-2 md:columns-3 gap-4 space-y-4">
               {initialMedia.map((photo) => {
                 const isLoaded = !!loadedImages[photo.id];
+                const handleResolve = () => setLoadedImages((prev) => ({ ...prev, [photo.id]: true }));
                 return (
                   <div 
                     key={photo.id}
@@ -962,7 +963,8 @@ useEffect(() => {
                       src={photo.url} 
                       alt="Collage Photo" 
                       loading="lazy"
-                      onLoad={() => setLoadedImages((prev) => ({ ...prev, [photo.id]: true }))}
+                      onLoad={handleResolve}
+                      onError={handleResolve}
                       className={`object-cover w-full h-auto transition-opacity duration-500 ease-in-out ${
                         isLoaded ? 'opacity-100' : 'opacity-0'
                       }`}
