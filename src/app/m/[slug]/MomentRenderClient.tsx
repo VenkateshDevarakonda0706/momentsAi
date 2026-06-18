@@ -285,14 +285,15 @@ useEffect(() => {
   const [isLetterOpen, setIsLetterOpen] = useState(false);
   const [activePhoto, setActivePhoto] = useState<string | null>(null);
   const [secretRevealed, setSecretRevealed] = useState(false);
+  const SCROLL_TOP_THRESHOLD = 500;
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const shouldShow = window.scrollY > 500;
+      const shouldShow = window.scrollY > SCROLL_TOP_THRESHOLD;
       setShowScrollTop((prev) => (prev !== shouldShow ? shouldShow : prev));
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
