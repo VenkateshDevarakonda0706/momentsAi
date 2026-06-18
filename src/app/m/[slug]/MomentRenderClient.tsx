@@ -299,7 +299,7 @@ useEffect(() => {
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Mobile Quick Share state
-  const [quickCopied, setQuickCopied] = useState(false);
+  const [quickShareTooltip, setQuickShareTooltip] = useState<string | null>(null);
   const quickCopyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Clean up copy timeouts on unmount
@@ -484,6 +484,16 @@ useEffect(() => {
       url: window.location.href,
     };
 
+    const triggerTooltip = (msg: string) => {
+      if (quickCopyTimeoutRef.current) {
+        clearTimeout(quickCopyTimeoutRef.current);
+      }
+      setQuickShareTooltip(msg);
+      quickCopyTimeoutRef.current = setTimeout(() => {
+        setQuickShareTooltip(null);
+      }, 1500);
+    };
+
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share(shareData);
@@ -501,18 +511,13 @@ useEffect(() => {
     if (typeof window !== 'undefined' && window.isSecureContext && navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(window.location.href);
-        
-        if (quickCopyTimeoutRef.current) {
-          clearTimeout(quickCopyTimeoutRef.current);
-        }
-        
-        setQuickCopied(true);
-        quickCopyTimeoutRef.current = setTimeout(() => {
-          setQuickCopied(false);
-        }, 1500);
+        triggerTooltip("Copied!");
       } catch (err) {
         console.error("Clipboard fallback copy failed:", err);
+        triggerTooltip("Copy failed");
       }
+    } else {
+      triggerTooltip("Unable to share");
     }
   };
 
@@ -1229,7 +1234,7 @@ useEffect(() => {
       <div className="md:hidden fixed bottom-6 right-6 z-40">
         <div className="relative">
           <AnimatePresence>
-            {quickCopied && (
+            {quickShareTooltip && (
               <motion.div
                 initial={{ opacity: 0, y: 8, x: "-50%", scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
@@ -1239,7 +1244,7 @@ useEffect(() => {
                 role="status"
                 aria-live="polite"
               >
-                Copied!
+                {quickShareTooltip}
                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-950" />
               </motion.div>
             )}
@@ -1250,7 +1255,7 @@ useEffect(() => {
             className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/10 shadow-lg flex items-center justify-center transition-transform active:scale-95 text-foreground"
             aria-label="Share this moment"
           >
-            <Share2 className="w-5.5 h-5.5" />
+            <Share2 className="w-5 h-5" />
           </button>
         </div>
       </div>
