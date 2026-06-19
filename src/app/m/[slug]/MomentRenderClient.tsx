@@ -17,11 +17,12 @@ import {
   Check, 
   Mail,
   LoaderCircle,
-  Volume
+  Volume,
+  ArrowUp
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { createClient } from '@/lib/supabase/client';
-import { formatDate } from '@/lib/utils';
+import { formatDate, calculateReadTime } from '@/lib/utils';
 
 interface MomentData {
   id: string;
@@ -224,6 +225,7 @@ export default function MomentRenderClient({ initialMoment, initialMedia, initia
   const style = themeStyles[themeSlug] || themeStyles.romantic;
   const embedData = parseMusicEmbed(initialMoment.music_url);
   const letterText = initialMoment.ai_letter || initialMoment.personal_message;
+  const readTime = calculateReadTime(initialMoment.ai_story_narrative);
 
   // View state triggers
   const [unlocked, setUnlocked] = useState(!initialMoment.is_password_protected);
@@ -285,6 +287,24 @@ useEffect(() => {
   const [activePhoto, setActivePhoto] = useState<string | null>(null);
   const [secretRevealed, setSecretRevealed] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const SCROLL_TOP_THRESHOLD = 500;
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const shouldShow = window.scrollY > SCROLL_TOP_THRESHOLD;
+      setShowScrollTop((prev) => (prev !== shouldShow ? shouldShow : prev));
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   // Guestbook & Reactions lists
   const [guestbook, setGuestbook] = useState(initialGuestbook);
@@ -762,7 +782,17 @@ useEffect(() => {
               className={`p-8 md:p-10 rounded-[32px] ${style.cardBg} border shadow-lg text-center space-y-4 relative overflow-hidden`}
               style={{ boxShadow: `0 15px 35px -10px ${style.glowColor}` }}
             >
-              <h3 className={`text-xs uppercase tracking-widest font-black ${style.subText}`}>Our Story Journey</h3>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2">
+                <h3 className={`text-xs uppercase tracking-widest font-black ${style.subText}`}>Our Story Journey</h3>
+                {readTime > 0 && (
+                  <>
+                    <span className="hidden sm:inline opacity-40 select-none">•</span>
+                    <span className="text-[10px] uppercase font-bold opacity-60 tracking-wider">
+                      {readTime} min read
+                    </span>
+                  </>
+                )}
+              </div>
               <p className="text-sm md:text-base leading-relaxed opacity-95">
                 {initialMoment.ai_story_narrative}
               </p>
@@ -1192,6 +1222,25 @@ useEffect(() => {
               </div>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Scroll To Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            transition={{ duration: 0.2 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-40 p-3.5 rounded-full bg-zinc-950/80 backdrop-blur-md shadow-2xl border border-white/10 hover:bg-zinc-900 transition-colors text-white cursor-pointer"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5 text-primary" />
+          </motion.button>
         )}
       </AnimatePresence>
     </div>
