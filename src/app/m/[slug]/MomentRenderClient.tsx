@@ -222,7 +222,9 @@ function parseMusicEmbed(url: string | null | undefined) {
 export default function MomentRenderClient({ initialMoment, initialMedia, initialGuestbook }: Props) {
   const supabase = createClient();
   const themeSlug = (initialMoment.themes?.slug || 'romantic') as keyof typeof themeStyles;
+  const [isMouseDown, setIsMouseDown] = useState(false);
   const style = themeStyles[themeSlug] || themeStyles.romantic;
+  
   const embedData = parseMusicEmbed(initialMoment.music_url);
   const letterText = initialMoment.ai_letter || initialMoment.personal_message;
   const readTime = calculateReadTime(initialMoment.ai_story_narrative);
@@ -251,6 +253,7 @@ const [volume, setVolume] = useState<number>(() => {
   });
 const [playing, setPlaying] = useState<boolean>(false);
 const [isMobile, setIsMobile] = useState<boolean>(false);
+const cursorClass = !isMobile && themeSlug === "romantic" ? (isMouseDown ? "cursor-heart-active" : "cursor-heart") : "";
 const [showVolume, setShowVolume] = useState<boolean>(false);
 const [isMuted, setIsMuted] = useState<boolean>(false);
 const audioRef = useRef<HTMLAudioElement>(new Audio(initialMoment.music_url ?? ''));
@@ -633,11 +636,10 @@ useEffect(() => {
           </div>
         </motion.div>
       </div>
-    );
-  }
-
+);
+}
   return (
-    <div className={`min-h-screen bg-gradient-to-b ${style.bg} ${style.font} pb-24 relative overflow-x-hidden ${style.text}`}>
+    <div className={`min-h-screen bg-gradient-to-b ${style.bg} ${style.font} pb-24 relative overflow-x-hidden ${style.text} ${cursorClass}`} onMouseDown={() => setIsMouseDown(true)} onMouseUp={() => setIsMouseDown(false)} onMouseLeave={() => setIsMouseDown(false)}>
       
       {/* Floating Particles system */}
       {themeSlug === 'romantic' && (
