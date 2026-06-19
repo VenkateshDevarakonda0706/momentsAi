@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Sparkles, Menu, X, ArrowRight, User } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -86,14 +87,26 @@ export default function Navbar() {
         <button 
           className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground"
           onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
+          aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
       {/* Mobile Drawer */}
-      {isOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 border-b border-white/10 bg-background/95 backdrop-blur-lg flex flex-col p-6 gap-6 shadow-2xl animate-in slide-in-from-top-5 duration-300">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            id="mobile-menu"
+            role="navigation"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="md:hidden absolute top-20 left-0 right-0 border-b border-white/10 bg-background/95 backdrop-blur-lg flex flex-col p-6 gap-6 shadow-2xl"
+          >
           <Link 
             href="#preview" 
             className="text-lg font-medium text-muted-foreground hover:text-foreground"
@@ -157,8 +170,9 @@ export default function Navbar() {
               </Link>
             </div>
           )}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
