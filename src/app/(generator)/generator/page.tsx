@@ -275,6 +275,14 @@ export default function GeneratorPage() {
   const [eventDate, setEventDate] = useState('');
   const [customTitle, setCustomTitle] = useState('');
   const [personalMessage, setPersonalMessage] = useState('');
+  // Date validation constants and state
+  const MAX_FUTURE_YEARS = 5;
+  const maxDateStr = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + MAX_FUTURE_YEARS);
+    return d.toISOString().split('T')[0];
+  })();
+  const [dateError, setDateError] = useState<string | null>(null);
   
   // Lists
   const [memoriesInput, setMemoriesInput] = useState('');
@@ -462,6 +470,12 @@ export default function GeneratorPage() {
         }
       }, 1200);
 
+      // Validate date before sending
+      if (dateError) {
+        alert(dateError);
+        setLoading(false);
+        return;
+      }
       const payload = {
         user_id: user.id,
         occasion,
@@ -845,6 +859,11 @@ export default function GeneratorPage() {
                           onChange={(e) => setSenderName(e.target.value)}
                           className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all font-semibold"
                         />
+                      {dateError && (
+                        <p id="date-error" className="text-xs text-red-500 font-semibold pl-1 animate-in fade-in-50 slide-in-from-top-1 duration-200">
+                          {dateError}
+                        </p>
+                      )}
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-bold text-zinc-500 pl-0.5 uppercase tracking-wider">Relationship</label>
@@ -865,7 +884,16 @@ export default function GeneratorPage() {
                       <input
                         type="date"
                         value={eventDate}
-                        onChange={(e) => setEventDate(e.target.value)}
+                        max={maxDateStr}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEventDate(val);
+                          if (val && val > maxDateStr) {
+                            setDateError('Date cannot be more than 5 years in the future.');
+                          } else {
+                            setDateError(null);
+                          }
+                        }}
                         className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all font-semibold text-zinc-700"
                       />
                     </div>
