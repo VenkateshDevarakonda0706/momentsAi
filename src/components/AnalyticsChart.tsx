@@ -19,7 +19,7 @@ const mockVisitData: VisitEntry[] = [
   { day: 'Sun', visits: 81 },
 ];
 
-/**
+/***
  * A lightweight responsive SVG line chart with accessible tooltip.
  * The chart is intentionally simple – no external charting library.
  */
@@ -28,7 +28,8 @@ export default function AnalyticsChart() {
 
   // Scale calculations – memoised because data never changes
   const { points, viewBox } = useMemo(() => {
-    const max = Math.max(...mockVisitData.map((d) => d.visits));
+    // Guard against divide‑by‑zero – ensure max is at least 1
+    const max = Math.max(...mockVisitData.map((d) => d.visits), 1);
     const w = 100; // viewBox width (percentage based)
     const h = 60; // viewBox height
     const paddingTop = 5;
@@ -52,34 +53,20 @@ export default function AnalyticsChart() {
   const vbWidth = Number(viewBox.split(' ')[2]);
   const vbHeight = Number(viewBox.split(' ')[3]);
 
-  const tooltip = hovered !== null ? (
-    <AnimatePresence>
-      <motion.div
-        key="tooltip"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="absolute bg-white border border-zinc-200/70 rounded-md shadow-lg px-3 py-1 text-sm whitespace-nowrap"
-        style={{
-          left: `${Math.min(Math.max(points[hovered].x, 5), 95)}%`,
-          bottom: `${100 - points[hovered].y}%`,
-          transform: 'translate(-50%, -110%)',
-        }}
-      >
-        <div className="font-medium text-zinc-900">{mockVisitData[hovered].day}</div>
-        <div>{mockVisitData[hovered].visits} visits</div>
-      </motion.div>
-    </AnimatePresence>
-  ) : null;
-
   return (
     <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative p-6 rounded-[28px] border border-zinc-200/70 bg-white shadow-sm"
-      >
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative p-6 rounded-[28px] border border-zinc-200/70 bg-white shadow-sm"
+    >
       {/* SVG chart */}
-      <svg viewBox={viewBox} className="w-full h-40" preserveAspectRatio="none" role="img" aria-label="Visit statistics for the last 7 days">
+      <svg
+        viewBox={viewBox}
+        className="w-full h-40"
+        preserveAspectRatio="none"
+        role="img"
+        aria-label="Visit statistics for the last 7 days"
+      >
         {/* X‑axis baseline */}
         <line
           x1={0}
@@ -122,8 +109,28 @@ export default function AnalyticsChart() {
           </text>
         ))}
       </svg>
-      {/* Tooltip overlay */}
-      {tooltip}
+      {/* Tooltip overlay – AnimatePresence stays mounted */}
+      <AnimatePresence>
+        {hovered !== null && (
+          <motion.div
+            key="tooltip"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="absolute bg-white border border-zinc-200/70 rounded-md shadow-lg px-3 py-1 text-sm whitespace-nowrap"
+            style={{
+              left: `${Math.min(Math.max(points[hovered].x, 5), 95)}%`,
+              bottom: `${100 - points[hovered].y}%`,
+              transform: 'translate(-50%, -110%)',
+            }}
+          >
+            <div className="font-medium text-zinc-900">
+              {mockVisitData[hovered].day}
+            </div>
+            <div>{mockVisitData[hovered].visits} visits</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
