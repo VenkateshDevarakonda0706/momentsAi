@@ -257,6 +257,7 @@ function detectMusicProvider(url: string) {
 }
 
 const MAX_CHARS = 500;
+const MIN_MEMORY_CHARS = 5;
 
 export default function GeneratorPage() {
   const router = useRouter();
@@ -265,6 +266,8 @@ export default function GeneratorPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("Analyzing your memories...");
+  const [memoryError, setMemoryError] = useState<string | null>(null);
+
 
   // Form parameters
   const [occasion, setOccasion] = useState('birthday');
@@ -382,6 +385,7 @@ export default function GeneratorPage() {
       setSecretMessage('');
       setPasswordProtection(false);
       setPasswordString('');
+      setMemoryError(null);
       setThemeId('romantic');
       setSlateVariant('cool_gray');
       setStep(1);
@@ -389,10 +393,19 @@ export default function GeneratorPage() {
   };
 
   const addMemory = () => {
-    if (memoriesInput.trim()) {
-      setMemories([...memories, memoriesInput.trim()]);
-      setMemoriesInput('');
+    const trimmed = memoriesInput.trim();
+    if (!trimmed) return;
+
+    if (trimmed.length < MIN_MEMORY_CHARS) {
+      setMemoryError(
+        `Timeline memory description must be at least ${MIN_MEMORY_CHARS} characters.`
+      );
+      return;
     }
+
+    setMemories([...memories, trimmed]);
+    setMemoriesInput('');
+    setMemoryError(null);
   };
 
   const removeMemory = (idx: number) => {
@@ -946,8 +959,13 @@ export default function GeneratorPage() {
                         type="text"
                         placeholder={activeQuestions.memoriesPlaceholder}
                         value={memoriesInput}
-                        onChange={(e) => setMemoriesInput(e.target.value)}
+                        onChange={(e) => {
+                          setMemoriesInput(e.target.value);
+                          if (memoryError) setMemoryError(null);
+                        }}
                         onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addMemory())}
+                        aria-invalid={!!memoryError}
+                        aria-describedby={memoryError ? "memory-error" : undefined}
                         className="flex-1 px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200/80 text-sm focus:outline-none font-semibold"
                       />
                       <button
@@ -958,6 +976,15 @@ export default function GeneratorPage() {
                         <Plus className="w-4.5 h-4.5" /> Add
                       </button>
                     </div>
+
+                    {memoryError && (
+                      <p
+                        id="memory-error"
+                        className="text-xs text-red-500 font-semibold pl-1 animate-in fade-in-50 slide-in-from-top-1 duration-200"
+                      >
+                        {memoryError}
+                      </p>
+                    )}
 
                     {memories.length > 0 && (
                       <div className="flex flex-wrap gap-2 pt-1.5 max-h-36 overflow-y-auto pr-1">
