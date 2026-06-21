@@ -456,11 +456,12 @@ export default function GeneratorPage() {
 
     setLoading(true);
     setLoadingStatus("Connecting to Bedrock...");
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Please sign in or log in to continue");
     
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("Please sign in or log in to continue");
+      }
       const loadingMessages = [
         "Analyzing your prompt details...",
         "Calling AI generative engine...",
