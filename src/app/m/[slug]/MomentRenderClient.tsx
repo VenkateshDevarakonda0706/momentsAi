@@ -372,6 +372,28 @@ useEffect(() => {
     };
   }, []);
 
+  // Escape key support to close lightbox view
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activePhoto !== null) {
+        setActivePhoto(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activePhoto]);
+
+  // Escape key support to close share showcase drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isShareOpen) {
+        setIsShareOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isShareOpen]);
+
   // Check for successful publish to trigger confetti & open share drawer
   useEffect(() => {
     if (typeof window !== 'undefined') {

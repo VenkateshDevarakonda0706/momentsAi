@@ -368,6 +368,16 @@ export default function GeneratorPage() {
   // Mobile preview layout overlay control
   const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobilePreviewOpen) {
+        setIsMobilePreviewOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobilePreviewOpen]);
+
   // Client Auto-save draft loader
   useEffect(() => {
     try {
